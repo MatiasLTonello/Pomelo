@@ -1,0 +1,10 @@
+2023-09-18 14:43:22.377 -03:00 [INF] Entramos a get token
+2023-09-18 14:51:14.977 -03:00 [INF] Entramos a get token
+2023-09-18 14:53:07.758 -03:00 [ERR] Entramos a get token
+2023-09-18 14:53:09.559 -03:00 [ERR] error creating user{"error":{"error_code":"DUPLICATE_USER","details":[{"code":"DUPLICATE_USER","detail":"User with specified email already exists in this branch."}]}
+2023-09-18 14:53:26.443 -03:00 [ERR] Entramos a get token
+2023-09-18 14:53:26.844 -03:00 [ERR] error creating user{"error":{"error_code":"DUPLICATE_USER","details":[{"code":"DUPLICATE_USER","detail":"User with specified email already exists in this branch."}]}
+2023-09-18 14:53:28.062 -03:00 [ERR] Entramos a get token
+2023-09-18 14:53:28.399 -03:00 [ERR] error creating user{"error":{"error_code":"DUPLICATE_USER","details":[{"code":"DUPLICATE_USER","detail":"User with specified email already exists in this branch."}]}
+2023-09-18 14:55:34.566 -03:00 [ERR] Entramos a get token
+2023-09-18 14:55:35.675 -03:00 [ERR] error creating user{"error":{"error_code":"DUPLICATE_USER","details":[{"code":"DUPLICATE_USER","detail":"User with specified email already exists in this branch."}]}
