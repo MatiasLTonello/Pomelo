@@ -6,6 +6,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<IServicePomeloAPI, Service_PomeloAPI>();
+builder.Services.AddScoped<ServiceAuthentication>();
+
 
 
 var app = builder.Build();

@@ -7,65 +7,20 @@ namespace PomeloAPI.Services
 {
 	public class Service_PomeloAPI : IServicePomeloAPI
 	{
-		private static string _clientid;
-		private static string _secretclient;
-		private static string _audience;
-		private static string _granttype;
-		private static string _baseurl;
-        private static string _token;
+        private string _token;
+        private string _baseurl = "https://api-sandbox.pomelo.la";
+        private readonly ServiceAuthentication _authentication;
 
-
-		public Service_PomeloAPI()
-		{
-			var builder  = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json").Build();
-
-			_clientid = builder.GetSection("ApiSettings:client_id").Value;
-			_secretclient = builder.GetSection("ApiSettings:secret_client").Value;
-			_audience = builder.GetSection("ApiSettings:audience").Value;
-            _granttype = builder.GetSection("ApiSettings:grant_type").Value;
-			_baseurl = "https://api-sandbox.pomelo.la";
-        }
-
-        public async Task Auth()
+        public Service_PomeloAPI(ServiceAuthentication authentication)
         {
-            try
-            {
-                var client = new HttpClient();
-                client.BaseAddress = new Uri(_baseurl);
+            _authentication = authentication;
+            _token = _authentication.GetAuthenticationToken().Result;
 
-                var credentials = new Credential()
-                {
-                    client_id = "UFqB9x1Q1v7s9iBAO058Vc6m0mXMPGUJ",
-                    audience = "https://auth-staging.pomelo.la",
-                    client_secret = "vrp-8kfz8HHBrXmScJorx1gZBIBwatgBaq0IGbqad-FyzA4Wr4mbgNq57qX_nkLT",
-                    grant_type = "client_credentials"
-                };
-
-                var content = new StringContent(JsonConvert.SerializeObject(credentials), Encoding.UTF8, "application/json");
-
-                var response = await client.PostAsync("/oauth/token", content);
-
-                if (response.IsSuccessStatusCode)
-                {
-                    var json_response = await response.Content.ReadAsStringAsync();
-                    var result = JsonConvert.DeserializeObject<CredentialResult>(json_response);
-                    _token = result.access_token;
-                }
-                else
-                {
-         
-                    throw new Exception("La solicitud de autenticación no fue exitosa. Código de estado HTTP: " + response);
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Ocurrió un error en la función Auth(): " + ex.Message, ex);
-            }
         }
+
 
         public async Task<CreatedCard> CreateCard(Card newCard)
         {
-            await Auth();
             var client = new HttpClient();
 
             client.BaseAddress = new Uri(_baseurl);
@@ -84,13 +39,12 @@ namespace PomeloAPI.Services
             else
             {
                 var errorMessage = await response.Content.ReadAsStringAsync();
-                throw new Exception($"La solicitud a la API no fue exitosa. Código de estado HTTP: {newCard.address.zip_code} {response.StatusCode}. Mensaje: {errorMessage}");
+                throw new Exception($"La solicitud a la API no fue exitosa. Código de estado HTTP:  {response.StatusCode}. Mensaje: {errorMessage}");
             }
         }
 
         public async Task<List<CreatedCard>> GetCards()
         {
-            await Auth();
 
             var client = new HttpClient();
 
@@ -117,7 +71,6 @@ namespace PomeloAPI.Services
 
         public async Task <UserData> CreateUser(CreateUserDTO newUser)
 		{
-			await Auth();
 
 			var client = new HttpClient();
 
@@ -147,7 +100,6 @@ namespace PomeloAPI.Services
 
         public async Task<UserData> GetUser(string id)
         {
-            await Auth();
             var client = new HttpClient();
 
             client.BaseAddress = new Uri(_baseurl);
@@ -174,7 +126,6 @@ namespace PomeloAPI.Services
 
         public async Task<List<UserData>> GetUsers()
         {
-            await Auth();
 
             var client = new HttpClient();
 

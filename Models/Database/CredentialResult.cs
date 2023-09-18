@@ -11,6 +11,8 @@ namespace PomeloAPI.Models
         public int expires_in { get; set; } = 0;
 
         public string token_type { get; set; } = null!;
+
+        public DateTime created_at { get; set; } = DateTime.Now;
 	}
 }
 
