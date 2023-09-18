@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using System.Net.Http.Headers;
 using System.Text;
+using Serilog;
 
 namespace PomeloAPI.Services
 {
@@ -39,6 +40,7 @@ namespace PomeloAPI.Services
             else
             {
                 var errorMessage = await response.Content.ReadAsStringAsync();
+                Log.Error("Error creating card : " + errorMessage);
                 throw new Exception($"La solicitud a la API no fue exitosa. Código de estado HTTP:  {response.StatusCode}. Mensaje: {errorMessage}");
             }
         }
@@ -62,6 +64,7 @@ namespace PomeloAPI.Services
             }
             else
             {
+                Log.Error("error getting cards : " + response);
                 throw new Exception("La solicitud a la API no fue exitosa. Código de estado HTTP: " + response.StatusCode);
 
             }
@@ -91,6 +94,7 @@ namespace PomeloAPI.Services
             else
             {
                 var errorMessage = await response.Content.ReadAsStringAsync();
+                Log.Error("error creating user" + errorMessage);
                 throw new Exception($"La solicitud a la API no fue exitosa. Código de estado HTTP: {response.StatusCode}. Mensaje: {errorMessage}");
             }
 
@@ -116,6 +120,7 @@ namespace PomeloAPI.Services
             }
             else
             {
+                Log.Error("Error get user by id " + response.Content);
                 throw new Exception("Ocurrió un error en la función getUser" + id + response);
 
             }
@@ -142,6 +147,7 @@ namespace PomeloAPI.Services
                 return resultado.data;
             } else
             {
+                Log.Error("Error GetUsers " + response);
                 throw new Exception("La solicitud a la API no fue exitosa. Código de estado HTTP: " + response.StatusCode);
 
             }

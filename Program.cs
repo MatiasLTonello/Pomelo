@@ -1,14 +1,20 @@
 ﻿using PomeloAPI.Services;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
+
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Information()
+    .MinimumLevel.Error()
+    .WriteTo.Console() 
+    .WriteTo.File("log.txt", rollingInterval: RollingInterval.Day)
+    .CreateLogger();
 
 // Add services to the container.
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<IServicePomeloAPI, Service_PomeloAPI>();
 builder.Services.AddScoped<ServiceAuthentication>();
-
-
 
 var app = builder.Build();
 
@@ -31,6 +37,9 @@ app.MapControllerRoute(
     pattern: "{controller}/{action=Index}/{id?}");
 
 app.MapFallbackToFile("index.html");
+
+app.Lifetime.ApplicationStopped.Register(() => Log.CloseAndFlush());
+
 
 app.Run();
 
