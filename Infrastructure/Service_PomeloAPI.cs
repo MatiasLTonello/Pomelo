@@ -18,13 +18,10 @@ namespace PomeloAPI.Services
             _token = authentication.GetAuthenticationToken().Result;
         }
 
-        public static async Task<T> PomeloFetch<T>(string url, HttpContent content = null, string token = null, HttpMethod method = null)
+        public static async Task<T> PomeloFetch<T>(string url, HttpMethod method, HttpContent content = null, string token = null)
         {
             try
             {
-                if (method == null)
-                    method = HttpMethod.Get;
-                _client.DefaultRequestHeaders.Clear();
                 if (!string.IsNullOrEmpty(token))
                 {
                     _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -44,8 +41,6 @@ namespace PomeloAPI.Services
                 else
                 {
                     var errorMessage = await response.Content.ReadAsStringAsync();
-                    // Puedes registrar el error aquí o lanzar una excepción según tus necesidades.
-                    // Log.Error("Error: " + errorMessage);
                     throw new Exception($"La solicitud a la API no fue exitosa. Código de estado HTTP: {response.StatusCode}. Mensaje: {errorMessage}");
                 }
             }
@@ -61,7 +56,7 @@ namespace PomeloAPI.Services
             var url = _baseurl + "/cards/v1";
             var content = new StringContent(JsonConvert.SerializeObject(newCard), Encoding.UTF8, "application/json");
 
-            var card = await PomeloFetch<CardResponse>(url, content, _token, HttpMethod.Post);
+            var card = await PomeloFetch<CardResponse>(url, HttpMethod.Post, content, _token);
             return card.data;
         }
 
@@ -154,7 +149,7 @@ namespace PomeloAPI.Services
         {
 
             var url = _baseurl + "/users/v1/?page[size]=40";
-            var users = await PomeloFetch<GetUsersAPIResponse>(url, null, _token, null);
+            var users = await PomeloFetch<GetUsersAPIResponse>(url, HttpMethod.Get, null, _token);
 
             return users.data;
             
