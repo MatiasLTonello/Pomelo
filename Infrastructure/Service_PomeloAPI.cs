@@ -62,87 +62,33 @@ namespace PomeloAPI.Services
 
         public async Task<List<CreatedCard>> GetCards()
         {
+            
+            var url = _baseurl + "/cards/v1";
+            var cards = await PomeloFetch<GetCardsAPIResponse>(url, HttpMethod.Get, null, _token);
 
-            var client = new HttpClient();
-
-            client.BaseAddress = new Uri(_baseurl);
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _token);
-
-            var response = await client.GetAsync("/cards/v1");
-
-            if (response.IsSuccessStatusCode)
-            {
-                var json_response = await response.Content.ReadAsStringAsync();
-                var resultado = JsonConvert.DeserializeObject<GetCardsAPIResponse>(json_response);
-
-                return resultado.data;
-            }
-            else
-            {
-                Log.Error("error getting cards : " + response);
-                throw new Exception("La solicitud a la API no fue exitosa. Código de estado HTTP: " + response.StatusCode);
-
-            }
-
+            return cards.data;
 
         }
 
         public async Task <UserData> CreateUser(CreateUserDTO newUser)
 		{
-
-			var client = new HttpClient();
-
-			client.BaseAddress = new Uri(_baseurl);
-			client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _token);
-
+            
+            var url = _baseurl + "/users/v1";
             var content = new StringContent(JsonConvert.SerializeObject(newUser), Encoding.UTF8, "application/json");
 
-            var response = await client.PostAsync("/users/v1", content);
-
-			if (response.IsSuccessStatusCode)
-			{
-                var json_response = await response.Content.ReadAsStringAsync();
-                var resultado = JsonConvert.DeserializeObject<GetUserResponse>(json_response);
-
-                return await GetUser(resultado.data.id);
-            }
-            else
-            {
-                var errorMessage = await response.Content.ReadAsStringAsync();
-                // todo: this log can be handled by a middleware.
-                Log.Error("error creating user" + errorMessage); 
-                throw new Exception($"La solicitud a la API no fue exitosa. Código de estado HTTP: {response.StatusCode}. Mensaje: {errorMessage}");
-            }
-
-        
+            var user = await PomeloFetch<GetUserResponse>(url, HttpMethod.Post, content, _token);
+            return await GetUser(user.data.id);
 
 		}
 
         public async Task<UserData> GetUser(string id)
         {
-            var client = new HttpClient();
+            
+            var url = _baseurl + "/users/v1/{id}";
+            var user = await PomeloFetch<GetUserResponse>(url, HttpMethod.Get, null, _token);
 
-            client.BaseAddress = new Uri(_baseurl);
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _token);
-
-            var response = await client.GetAsync($"/users/v1/{id}");
-
-            if (response.IsSuccessStatusCode)
-            {
-                var json_response = await response.Content.ReadAsStringAsync();
-                var resultado = JsonConvert.DeserializeObject<GetUserResponse>(json_response);
-
-                return resultado.data;
-            }
-            else
-            {
-                Log.Error("Error get user by id " + response.Content);
-                throw new Exception("Ocurrió un error en la función getUser" + id + response);
-
-            }
-
-          
-
+            return user.data;
+           
         }
 
         public async Task<List<UserData>> GetUsers()

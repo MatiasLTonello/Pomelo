@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using System.Text;
 using Serilog;
+using PomeloAPI.Services;
 
 
 namespace PomeloFintech.Services
@@ -55,8 +56,25 @@ namespace PomeloFintech.Services
 
         private async Task CreateToken()
         {
+            var url = _baseurl + "/oauth/token";
+            var credentials = new Credential()
+            {
+                client_id = ConfigService.Instance.GetClientID(),
+                client_secret = ConfigService.Instance.GetClientSecret(),
+                audience = ConfigService.Instance.GetAudience(),
+                grant_type = ConfigService.Instance.GetGrantType()
+            };
+
+            var content = new StringContent(JsonConvert.SerializeObject(credentials), Encoding.UTF8, "application/json");
+
+            var token = await PomeloAPI.Services.Service_PomeloAPI.PomeloFetch<CredentialResult>(url, HttpMethod.Post,
+                content);
+            _token = token;
+
+            /*
             try
             {
+
                 var client = new HttpClient();
                 client.BaseAddress = new Uri(_baseurl);
 
@@ -88,7 +106,7 @@ namespace PomeloFintech.Services
             {
                 Log.Error("Error creating token : " + ex);
                 throw new Exception("Ocurrió un error en la función CreateToken(): " + ex.Message, ex);
-            }
+            }*/
         }
     }
 }
