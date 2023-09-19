@@ -13,7 +13,7 @@ const Home = () => {
 
   const getUsers = async () => {
     try {
-      const response = await fetch(`https://localhost:7283/users`, {
+        const response = await fetch(`https://pomelo-fintech.azurewebsites.net`, {
         method: "GET",
         headers: {
           'Access-Control-Allow-Origin': '*',
