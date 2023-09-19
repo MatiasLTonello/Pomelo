@@ -14,7 +14,6 @@ namespace PomeloAPI.Controllers
             servicePomeloAPI = servicePomelo;
         }
 
-
         [HttpGet("/users")]
         public Task<List<UserData>> Get()
         {
@@ -45,7 +44,6 @@ namespace PomeloAPI.Controllers
             return servicePomeloAPI.CreateCard(newCard);
         }
 
-    
     }
 }
 

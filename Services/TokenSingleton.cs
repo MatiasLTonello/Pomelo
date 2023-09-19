@@ -13,7 +13,7 @@ namespace PomeloFintech.Services
         private static TokenSingleton instance = null;
         private static readonly object lockObject = new object();
 
-        protected TokenSingleton() { }
+        private TokenSingleton() { }
 
         public static TokenSingleton Instance
         {
@@ -57,16 +57,15 @@ namespace PomeloFintech.Services
         {
             try
             {
-                var builder = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json").Build();
                 var client = new HttpClient();
                 client.BaseAddress = new Uri(_baseurl);
 
                 var credentials = new Credential()
                 {
-                    client_id = builder?.GetSection("ApiSettings:client_id").Value!,
-                    client_secret = builder?.GetSection("ApiSettings:client_secret").Value!,
-                    audience = builder?.GetSection("ApiSettings:audience").Value!,
-                    grant_type = builder?.GetSection("ApiSettings:grant_type").Value!
+                    client_id = ConfigService.Instance.GetClientID(),
+                    client_secret = ConfigService.Instance.GetClientSecret(),
+                    audience = ConfigService.Instance.GetAudience(),
+                    grant_type = ConfigService.Instance.GetGrantType()
                 };
 
                 var content = new StringContent(JsonConvert.SerializeObject(credentials), Encoding.UTF8, "application/json");

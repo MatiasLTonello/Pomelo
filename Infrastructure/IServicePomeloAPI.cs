@@ -1,5 +1,4 @@
-﻿using System;
-using PomeloAPI.Models;
+﻿using PomeloAPI.Models;
 namespace PomeloAPI.Services
 
 {

@@ -16,7 +16,6 @@ namespace PomeloAPI.Services
         {
             _authentication = authentication;
             _token = _authentication.GetAuthenticationToken().Result;
-
         }
 
 
@@ -94,7 +93,8 @@ namespace PomeloAPI.Services
             else
             {
                 var errorMessage = await response.Content.ReadAsStringAsync();
-                Log.Error("error creating user" + errorMessage);
+                // todo: this log can be handled by a middleware.
+                Log.Error("error creating user" + errorMessage); 
                 throw new Exception($"La solicitud a la API no fue exitosa. Código de estado HTTP: {response.StatusCode}. Mensaje: {errorMessage}");
             }
 
