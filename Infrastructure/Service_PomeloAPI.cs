@@ -10,38 +10,59 @@ namespace PomeloAPI.Services
 	{
         private string _token;
         private string _baseurl = "https://api-sandbox.pomelo.la";
-        private readonly ServiceAuthentication _authentication;
+        private static readonly HttpClient _client = new HttpClient();
+
 
         public Service_PomeloAPI(ServiceAuthentication authentication)
         {
-            _authentication = authentication;
-            _token = _authentication.GetAuthenticationToken().Result;
+            _token = authentication.GetAuthenticationToken().Result;
         }
 
+        public static async Task<T> PomeloFetch<T>(string url, HttpContent content = null, string token = null, HttpMethod method = null)
+        {
+            try
+            {
+                if (method == null)
+                    method = HttpMethod.Get;
+                _client.DefaultRequestHeaders.Clear();
+                if (!string.IsNullOrEmpty(token))
+                {
+                    _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                }
+                var requestMessage = new HttpRequestMessage(method, url);
+                if (content != null)
+                {
+                    requestMessage.Content = content;
+                }
+                var response = await _client.SendAsync(requestMessage);
+                if (response.IsSuccessStatusCode)
+                {
+                    var json_response = await response.Content.ReadAsStringAsync();
+                    var resultado = JsonConvert.DeserializeObject<T>(json_response);
+                    return resultado;
+                }
+                else
+                {
+                    var errorMessage = await response.Content.ReadAsStringAsync();
+                    // Puedes registrar el error aquí o lanzar una excepción según tus necesidades.
+                    // Log.Error("Error: " + errorMessage);
+                    throw new Exception($"La solicitud a la API no fue exitosa. Código de estado HTTP: {response.StatusCode}. Mensaje: {errorMessage}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error("Error en PomeloFetch: " + ex.Message);
+                throw;
+            }
+        }
 
         public async Task<CreatedCard> CreateCard(Card newCard)
         {
-            var client = new HttpClient();
-
-            client.BaseAddress = new Uri(_baseurl);
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _token);
-
+            var url = _baseurl + "/cards/v1";
             var content = new StringContent(JsonConvert.SerializeObject(newCard), Encoding.UTF8, "application/json");
 
-            var response = await client.PostAsync("/cards/v1", content);
-
-            if (response.IsSuccessStatusCode)
-            {
-                var json_response = await response.Content.ReadAsStringAsync();
-                var resultado = JsonConvert.DeserializeObject<CardResponse>(json_response);
-                return resultado.data;
-            }
-            else
-            {
-                var errorMessage = await response.Content.ReadAsStringAsync();
-                Log.Error("Error creating card : " + errorMessage);
-                throw new Exception($"La solicitud a la API no fue exitosa. Código de estado HTTP:  {response.StatusCode}. Mensaje: {errorMessage}");
-            }
+            var card = await PomeloFetch<CardResponse>(url, content, _token, HttpMethod.Post);
+            return card.data;
         }
 
         public async Task<List<CreatedCard>> GetCards()
@@ -132,27 +153,11 @@ namespace PomeloAPI.Services
         public async Task<List<UserData>> GetUsers()
         {
 
-            var client = new HttpClient();
+            var url = _baseurl + "/users/v1/?page[size]=40";
+            var users = await PomeloFetch<GetUsersAPIResponse>(url, null, _token, null);
 
-            client.BaseAddress = new Uri(_baseurl);
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _token);
-
-            var response = await client.GetAsync("/users/v1/?page[size]=20");
-
-            if (response.IsSuccessStatusCode)
-            {
-                var json_response = await response.Content.ReadAsStringAsync();
-                var resultado = JsonConvert.DeserializeObject<GetUsersAPIResponse>(json_response);
-
-                return resultado.data;
-            } else
-            {
-                Log.Error("Error GetUsers " + response);
-                throw new Exception("La solicitud a la API no fue exitosa. Código de estado HTTP: " + response.StatusCode);
-
-            }
-
-           
+            return users.data;
+            
         }
     }
 }

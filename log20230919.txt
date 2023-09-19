@@ -1,0 +1,1 @@
+2023-09-19 12:46:37.552 -03:00 [ERR] error creating user{"error":{"error_code":"DUPLICATE_USER","details":[{"code":"DUPLICATE_USER","detail":"User with specified email already exists in this branch."}]}
