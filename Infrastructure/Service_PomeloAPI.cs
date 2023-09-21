@@ -96,7 +96,7 @@ namespace PomeloAPI.Services
         public async Task<List<UserData>> GetUsers()
         {
 
-            var url = _baseurl + "/users/?page[size]=40";
+            var url = _baseurl + "/users/?page[80]";
             var users = await PomeloFetch<GetUsersAPIResponse>(url, HttpMethod.Get, null, _token);
 
             return users.data;
