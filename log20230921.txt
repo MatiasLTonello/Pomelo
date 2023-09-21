@@ -1,0 +1,2 @@
+2023-09-21 14:54:33.597 -03:00 [ERR] Error on Fetch: La solicitud a la API no fue exitosa. Código de estado HTTP: BadRequest. Mensaje: {"error":{"error_code":"DUPLICATE_USER","details":[{"code":"DUPLICATE_USER","detail":"User with specified email already exists in this branch."}]}
+2023-09-21 15:00:41.742 -03:00 [ERR] Error on Fetch: La solicitud a la API no fue exitosa. Código de estado HTTP: BadRequest. Mensaje: {"error":{"error_code":"DUPLICATE_USER","details":[{"code":"DUPLICATE_USER","detail":"User with specified email already exists in this branch."}]}

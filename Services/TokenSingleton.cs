@@ -71,42 +71,7 @@ namespace PomeloFintech.Services
                 content);
             _token = token;
 
-            /*
-            try
-            {
-
-                var client = new HttpClient();
-                client.BaseAddress = new Uri(_baseurl);
-
-                var credentials = new Credential()
-                {
-                    client_id = ConfigService.Instance.GetClientID(),
-                    client_secret = ConfigService.Instance.GetClientSecret(),
-                    audience = ConfigService.Instance.GetAudience(),
-                    grant_type = ConfigService.Instance.GetGrantType()
-                };
-
-                var content = new StringContent(JsonConvert.SerializeObject(credentials), Encoding.UTF8, "application/json");
-
-                var response = await client.PostAsync("/oauth/token", content);
-
-                if (response.IsSuccessStatusCode)
-                {
-                    var json_response = await response.Content.ReadAsStringAsync();
-                    var result = JsonConvert.DeserializeObject<CredentialResult>(json_response);
-                    _token = result;
-                }
-                else
-                {
-                    Log.Error("Error creating token : " + response);
-                    throw new Exception("La solicitud de autenticación no fue exitosa. Código de estado HTTP: " + response);
-                }
-            }
-            catch (Exception ex)
-            {
-                Log.Error("Error creating token : " + ex);
-                throw new Exception("Ocurrió un error en la función CreateToken(): " + ex.Message, ex);
-            }*/
+       
         }
     }
 }

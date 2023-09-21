@@ -28,10 +28,26 @@
     <None Remove="$(SpaRoot)**" />
     <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
     <None Remove="Infrastructure\" />
+    <Content Remove="PomeloTest\**" />
+    <None Remove="PomeloTest\**" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Infrastructure\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="PomeloTest\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Remove="PomeloTest\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="PomeloTest\obj\PomeloTest.csproj.nuget.dgspec.json" />
+    <_ContentIncludedByDefault Remove="PomeloTest\obj\project.assets.json" />
+    <_ContentIncludedByDefault Remove="PomeloTest\obj\project.packagespec.json" />
   </ItemGroup>
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">
     <!-- Ensure Node.js is installed -->

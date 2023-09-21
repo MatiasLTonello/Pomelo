@@ -2,6 +2,8 @@
 using Newtonsoft.Json;
 using System.Net.Http.Headers;
 using System.Text;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using Serilog;
 
 namespace PomeloAPI.Services
@@ -41,12 +43,12 @@ namespace PomeloAPI.Services
                 else
                 {
                     var errorMessage = await response.Content.ReadAsStringAsync();
-                    throw new Exception($"La solicitud a la API no fue exitosa. Código de estado HTTP: {response.StatusCode}. Mensaje: {errorMessage}");
+                    throw new Exception($"La solicitud a la API no fue exitosa. Código de estado HTTP:{url} {response.StatusCode}. Mensaje: {errorMessage}");
                 }
             }
             catch (Exception ex)
             {
-                Log.Error("Error en PomeloFetch: " + ex.Message);
+                Log.Error("Error on Fetch: " + ex.Message);
                 throw;
             }
         }
@@ -70,21 +72,21 @@ namespace PomeloAPI.Services
 
         }
 
-        public async Task <UserData> CreateUser(CreateUserDTO newUser)
+        public async Task<GetUserResponse> CreateUser(CreateUserDTO newUser)
 		{
             
             var url = _baseurl + "/users/v1";
             var content = new StringContent(JsonConvert.SerializeObject(newUser), Encoding.UTF8, "application/json");
 
             var user = await PomeloFetch<GetUserResponse>(url, HttpMethod.Post, content, _token);
-            return await GetUser(user.data.id);
-
-		}
+            return user;
+        }
 
         public async Task<UserData> GetUser(string id)
         {
             
-            var url = _baseurl + "/users/v1/{id}";
+            var url = _baseurl + "/users/v1/" + id;
+                
             var user = await PomeloFetch<GetUserResponse>(url, HttpMethod.Get, null, _token);
 
             return user.data;
@@ -94,7 +96,7 @@ namespace PomeloAPI.Services
         public async Task<List<UserData>> GetUsers()
         {
 
-            var url = _baseurl + "/users/v1/?page[size]=40";
+            var url = _baseurl + "/users/?page[size]=40";
             var users = await PomeloFetch<GetUsersAPIResponse>(url, HttpMethod.Get, null, _token);
 
             return users.data;

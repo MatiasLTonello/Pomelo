@@ -1,10 +1,11 @@
-﻿using PomeloAPI.Models;
+﻿using Microsoft.AspNetCore.Mvc;
+using PomeloAPI.Models;
 namespace PomeloAPI.Services
 
 {
 	public interface IServicePomeloAPI
 	{
-        Task <UserData> CreateUser(CreateUserDTO user);
+		Task<GetUserResponse> CreateUser(CreateUserDTO user);
         Task<List<UserData>> GetUsers();
         Task<UserData> GetUser(string id);
         Task<CreatedCard> CreateCard(Card newCard);

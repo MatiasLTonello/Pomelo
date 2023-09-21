@@ -21,9 +21,10 @@ namespace PomeloAPI.Controllers
         }
 
         [HttpPost("/users/create")]
-        public Task<UserData> CreateUser([FromBody] CreateUserDTO user)
+        public async  Task<ActionResult<UserData>> CreateUser([FromBody] CreateUserDTO user)
         { 
-            return servicePomeloAPI.CreateUser(user);
+            var user2 =  await servicePomeloAPI.CreateUser(user);
+            return CreatedAtAction(nameof(Get), new { id = user2.data.id }, user2);
         }
 
         [HttpGet("/users/{id}")]
